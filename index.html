@@ -1,423 +1,136 @@
-            <!DOCTYPE html>
-<html lang="pt-BR" class="h-full">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Parceiro da Fazenda - Seu Assistente Rural</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        farm: {
-                            50: '#f2f9f1',
-                            100: '#e1f2df',
-                            200: '#c5e5c2',
-                            300: '#9bcd96',
-                            400: '#6eb068',
-                            500: '#4c9246',
-                            600: '#3a7635',
-                            700: '#305e2b',
-                            800: '#2a4c26',
-                            900: '#233f20',
-                            950: '#0e220c',
-                        },
-                        earth: {
-                            50: '#fbf8f5',
-                            100: '#f5efe8',
-                            200: '#e9dccc',
-                            300: '#d9c2aa',
-                            400: '#c5a383',
-                            500: '#b88a66',
-                            600: '#a37554',
-                            700: '#885e44',
-                            800: '#6f4c3b',
-                            900: '#5c4132',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Pulse animation for microphone */
-        @keyframes micPulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-                transform: scale(1);
-            }
-            70% {
-                box-shadow: 0 0 0 16px rgba(220, 38, 38, 0);
-                transform: scale(1.05);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-                transform: scale(1);
-            }
-        }
-
-        .recording-pulse {
-            animation: micPulse 1.5s infinite;
-            background-color: #dc2626 !important;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parceiro da Fazenda</title>
+<meta name="theme-color" content="#24552b">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+  .recording{background:#dc2626!important;animation:pulse 1.2s infinite}
+  @keyframes pulse{50%{box-shadow:0 0 0 9px #dc262633}}
+  button,input{touch-action:manipulation}
+</style>
 </head>
-<body class="bg-amber-50/40 dark:bg-zinc-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col antialiased selection:bg-farm-500 selection:text-white transition-colors duration-200">
+<body class="min-h-screen bg-amber-50 text-slate-800">
+<header class="sticky top-0 z-20 bg-green-900 text-white shadow">
+ <div class="mx-auto flex max-w-3xl items-center justify-between gap-2 p-3">
+  <div class="flex items-center gap-3"><div class="flex h-11 w-11 items-center justify-center rounded-full bg-green-700 text-amber-300"><i class="fa-solid fa-wheat-awn text-xl"></i></div>
+   <div><h1 class="font-bold text-lg">Parceiro da Fazenda</h1><p class="text-xs text-green-100">Assistente do campo 🌾</p></div>
+  </div>
+  <div class="flex gap-1">
+   <button id="voiceToggle" class="rounded-full p-3 hover:bg-green-800" title="Ativar ou desligar voz" aria-label="Ativar ou desligar voz"><i class="fa-solid fa-volume-high"></i></button>
+   <button id="themeToggle" class="rounded-full p-3 hover:bg-green-800" title="Alternar tema" aria-label="Alternar tema"><i class="fa-solid fa-moon"></i></button>
+   <button id="settingsButton" class="rounded-full p-3 hover:bg-green-800" title="Configurações" aria-label="Configurações"><i class="fa-solid fa-gear"></i></button>
+  </div>
+ </div>
+</header>
+<main class="mx-auto flex min-h-[calc(100vh-68px)] w-full max-w-3xl flex-col gap-4 p-3 sm:p-5">
+ <section id="messages" class="flex-1 space-y-3" aria-live="polite">
+  <div class="rounded-2xl border border-green-100 bg-white p-4 shadow-sm">
+   <p class="font-bold text-green-900">Ôpa, meu amigo! Seja bem-vindo! 🌾</p>
+   <p class="mt-2 text-sm leading-relaxed">Sou o <strong>Parceiro da Fazenda</strong>. Posso ajudar com dúvidas sobre plantio, solo, irrigação, pragas, clima e criação de animais.</p>
+   <p class="mt-2 text-xs text-slate-500">Escolha um assunto ou escreva sua pergunta aqui embaixo.</p>
+  </div>
+ </section>
+ <section class="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Assuntos rápidos">
+  <button class="topic rounded-xl border bg-white p-3 text-left shadow-sm hover:border-green-600" data-question="Dê dicas para plantio e preparo do solo."><i class="fa-solid fa-seedling mb-2 text-green-700"></i><span class="block text-sm font-semibold">Plantio & Solo</span><span class="text-xs text-slate-500">Milho, feijão, solo</span></button>
+  <button class="topic rounded-xl border bg-white p-3 text-left shadow-sm hover:border-green-600" data-question="Como planejar a irrigação de uma pequena lavoura?"><i class="fa-solid fa-droplet mb-2 text-blue-600"></i><span class="block text-sm font-semibold">Irrigação</span><span class="text-xs text-slate-500">Água e manejo</span></button>
+  <button class="topic rounded-xl border bg-white p-3 text-left shadow-sm hover:border-green-600" data-question="Como identificar e prevenir pragas na lavoura?"><i class="fa-solid fa-bug mb-2 text-amber-600"></i><span class="block text-sm font-semibold">Pragas</span><span class="text-xs text-slate-500">Identificação e prevenção</span></button>
+  <button class="topic rounded-xl border bg-white p-3 text-left shadow-sm hover:border-green-600" data-question="Quais são os cuidados básicos com animais de criação?"><i class="fa-solid fa-cow mb-2 text-rose-600"></i><span class="block text-sm font-semibold">Animais</span><span class="text-xs text-slate-500">Gado e aves</span></button>
+ </section>
+ <form id="chatForm" class="sticky bottom-0 flex items-center gap-2 rounded-full border bg-white p-2 shadow-lg">
+  <input id="question" class="min-w-0 flex-1 rounded-full px-3 py-3 text-base outline-none" placeholder="Pergunte algo sobre a roça..." autocomplete="off" aria-label="Sua pergunta">
+  <button id="micButton" type="button" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green-600 text-white hover:bg-green-700" title="Falar pergunta" aria-label="Falar pergunta"><i class="fa-solid fa-microphone"></i></button>
+  <button id="sendButton" type="submit" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-green-900 text-white hover:bg-green-800" title="Enviar" aria-label="Enviar pergunta"><i class="fa-solid fa-paper-plane"></i></button>
+ </form>
+ <p class="text-center text-xs text-slate-500">As orientações são gerais. Para decisões sobre defensivos, saúde animal ou doses, consulte um profissional rural.</p>
+</main>
+<div id="settingsModal" class="fixed inset-0 z-30 hidden items-center justify-center bg-black/50 p-4">
+ <div class="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
+  <div class="flex items-center justify-between"><h2 class="text-lg font-bold">Configuração da Gemini</h2><button id="closeSettings" class="rounded-lg p-2" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button></div>
+  <p class="mt-3 text-sm">Para respostas de inteligência artificial, cole sua própria chave da API Gemini. Ela fica salva somente neste navegador. Não coloque uma chave pessoal no código público do site.</p>
+  <label class="mt-4 block text-sm font-semibold" for="apiKey">Chave da API</label>
+  <input id="apiKey" type="password" class="mt-1 w-full rounded-xl border p-3" placeholder="Cole sua chave aqui" autocomplete="off">
+  <div class="mt-4 flex gap-2"><button id="saveKey" class="flex-1 rounded-xl bg-green-800 p-3 font-semibold text-white">Salvar chave</button><button id="removeKey" class="rounded-xl border px-3">Apagar</button></div>
+  <p class="mt-3 text-xs text-slate-500">Sem chave, o site ainda responde a um teste básico, mas não usa a IA Gemini.</p>
+ </div>
+</div>
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ const messages = $('messages'), form = $('chatForm'), input = $('question');
+ let apiKey = localStorage.getItem('PARCEIRO_GEMINI_KEY') || '';
+ let voiceEnabled = localStorage.getItem('PARCEIRO_VOICE') !== 'false';
+ let dark = false, busy = false, recognition = null;
+ const modal = $('settingsModal');
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-30 bg-farm-800 text-white shadow-md border-b border-farm-900">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-farm-600 flex items-center justify-center text-amber-300 shadow-inner">
-                    <i class="fa-solid fa-wheat-awn text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-display font-bold text-lg leading-tight tracking-wide flex items-center gap-2">
-                        Parceiro da Fazenda
-                    </h1>
-                    <p class="text-xs text-farm-200 font-medium flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-                        Assistente de Voz do Campo
-                    </p>
-                </div>
-            </div>
-
-            <!-- CONTROLES SUPERIORES -->
-            <div class="flex items-center gap-1 sm:gap-2">
-                <button id="btnTTS" title="Ativar/Desativar Voz" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
-                    <i class="fa-solid fa-volume-high text-lg"></i>
-                </button>
-                <button id="btnTheme" title="Alternar Tema" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
-                    <i class="fa-solid fa-moon text-lg"></i>
-                </button>
-                <button id="btnClearHistory" title="Limpar Conversa" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
-                    <i class="fa-solid fa-rotate-right text-lg"></i>
-                </button>
-                <button id="btnSettings" title="Configurações da API" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
-                    <i class="fa-solid fa-sliders text-lg"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col justify-between gap-4">
-        
-        <!-- MENSAGENS -->
-        <div id="chatContainer" class="flex-1 overflow-y-auto space-y-4 pr-1 min-h-[50vh] max-h-[calc(100vh-220px)]">
-            <!-- Boas-vindas -->
-            <div class="flex items-start gap-3 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-emerald-900/10 dark:border-zinc-800">
-                <div class="w-9 h-9 rounded-full bg-farm-700 text-amber-300 flex items-center justify-center shrink-0 font-bold">
-                    <i class="fa-solid fa-tractor text-sm"></i>
-                </div>
-                <div class="space-y-2 text-sm leading-relaxed">
-                    <p class="font-semibold text-farm-900 dark:text-farm-300">Ôpa, meu amigo! Seja bem-vindo! 🌾</p>
-                    <p>Sou o <strong>Parceiro da Fazenda</strong>. Estou aqui pra te ajudar na lida diária da roça: plantio, criação, irrigação, clima e adubação.</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 italic bg-amber-50 dark:bg-zinc-800/60 p-2 rounded-lg border border-amber-200/50 dark:border-zinc-700">
-                        💡 Toque nos cards abaixo ou aperte o microfone verde pra conversar por voz!
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARDS DE ATALHO RÁPIDO -->
-        <div id="quickCards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-1.5 group-hover:bg-farm-600 group-hover:text-white transition-colors">
-                    <i class="fa-solid fa-seedling"></i>
-                </div>
-                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Plantio & Solo</div>
-                <div class="text-[10px] text-slate-500 dark:text-slate-400">Milho, café, feijão</div>
-            </button>
-            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
-                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-1.5 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <i class="fa-solid fa-droplet"></i>
-                </div>
-                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Irrigação</div>
-                <div class="text-[10px] text-slate-500 dark:text-slate-400">Gotejamento & água</div>
-            </button>
-            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
-                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-1.5 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                    <i class="fa-solid fa-bug"></i>
-                </div>
-                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Pragas & Insetos</div>
-                <div class="text-[10px] text-slate-500 dark:text-slate-400">Repelentes naturais</div>
-            </button>
-            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
-                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center mb-1.5 group-hover:bg-rose-600 group-hover:text-white transition-colors">
-                    <i class="fa-solid fa-cow"></i>
-                </div>
-                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Criação & Animais</div>
-                <div class="text-[10px] text-slate-500 dark:text-slate-400">Galinhas, gado e suínos</div>
-            </button>
-        </div>
-
-        <!-- ÁREA DE ENTRADA -->
-        <div class="sticky bottom-3 pt-2">
-            <form id="chatForm" class="flex items-center gap-2 bg-white dark:bg-zinc-900 p-2 rounded-full shadow-lg border border-slate-200 dark:border-zinc-800">
-                <input type="text" id="userInput" placeholder="Pergunte algo sobre a roça..." class="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400">
-                <button type="submit" id="btnSend" title="Enviar Mensagem" class="w-10 h-10 rounded-full bg-farm-700 hover:bg-farm-800 text-white flex items-center justify-center shrink-0 transition-all active:scale-95">
-                    <i class="fa-solid fa-paper-plane text-sm"></i>
-                </button>
-                <button type="button" id="btnMic" title="Conversar por Voz" class="w-12 h-12 rounded-full bg-farm-600 hover:bg-farm-700 text-white flex items-center justify-center shrink-0 transition-all shadow-md active:scale-95">
-                    <i class="fa-solid fa-microphone text-lg"></i>
-                </button>
-            </form>
-        </div>
-    </main>
-
-    <!-- MODAL DE CONFIGURAÇÕES -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-zinc-800 space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-3">
-                <h3 class="font-display font-bold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-key text-farm-600"></i>
-                    Configurar Chave da API
-                </h3>
-                <button id="btnCloseSettings" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <div class="space-y-3">
-                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                    Para conversar com o Parceiro da Fazenda, informe sua Chave de API do Google Gemini.
-                </p>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Chave API Gemini:</label>
-                    <input type="password" id="apiKeyInput" placeholder="Cole sua chave AIzaSy... aqui" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-farm-500">
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-2">
-                <button id="btnSaveKey" class="w-full py-2.5 bg-farm-700 hover:bg-farm-800 text-white font-semibold rounded-xl text-sm transition-colors shadow-md">
-                    Salvar Chave
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT DO APLICATIVO -->
-    <script>
-        // ESTADO DA APLICAÇÃO
-        const STATE = {
-            apiKey: localStorage.getItem('GEMINI_API_KEY') || '',
-            ttsEnabled: localStorage.getItem('TTS_ENABLED') !== 'false',
-            darkMode: localStorage.getItem('DARK_MODE') === 'true',
-            history: [],
-            isRecording: false
-        };
-
-        // ELEMENTOS DO DOM
-        const $ = (id) => document.getElementById(id);
-        const chatContainer = $('chatContainer');
-        const chatForm = $('chatForm');
-        const userInput = $('userInput');
-        const btnMic = $('btnMic');
-        const btnTTS = $('btnTTS');
-        const btnTheme = $('btnTheme');
-        const btnClearHistory = $('btnClearHistory');
-        const btnSettings = $('btnSettings');
-        const settingsModal = $('settingsModal');
-        const btnCloseSettings = $('btnCloseSettings');
-        const apiKeyInput = $('apiKeyInput');
-        const btnSaveKey = $('btnSaveKey');
-
-        // INICIALIZAÇÃO
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            initTTSButton();
-            setupEventListeners();
-            
-            // Se não houver chave salva, abre as configurações automaticamente após 1 segundo
-            if (!STATE.apiKey) {
-                setTimeout(() => openSettings(), 800);
-            }
-        });
-
-        // EVENT LISTENERS
-        function setupEventListeners() {
-            chatForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                handleUserMessage(userInput.value.trim());
-            });
-
-            btnSettings.addEventListener('click', openSettings);
-            btnCloseSettings.addEventListener('click', closeSettings);
-            btnSaveKey.addEventListener('click', saveApiKey);
-            
-            btnTheme.addEventListener('click', toggleTheme);
-            btnTTS.addEventListener('click', toggleTTS);
-            btnClearHistory.addEventListener('click', clearHistory);
-
-            // Atalhos rápidos
-            document.querySelectorAll('.quick-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const title = card.querySelector('.font-semibold').textContent;
-                    handleUserMessage(`Quero dicas e orientações sobre: ${title}`);
-                });
-            });
-
-            // Microfone (Voz)
-            btnMic.addEventListener('click', toggleSpeechRecognition);
-        }
-
-        // TEMA ESCURO / CLARO
-        function initTheme() {
-            if (STATE.darkMode) {
-                document.documentElement.classList.add('dark');
-                btnTheme.querySelector('i').className = 'fa-solid fa-sun text-lg';
-            }
-        }
-
-        function toggleTheme() {
-            STATE.darkMode = !STATE.darkMode;
-            localStorage.setItem('DARK_MODE', STATE.darkMode);
-            document.documentElement.classList.toggle('dark');
-            btnTheme.querySelector('i').className = STATE.darkMode ? 'fa-solid fa-sun text-lg' : 'fa-solid fa-moon text-lg';
-        }
-
-        // VOZ (TTS)
-        function initTTSButton() {
-            btnTTS.querySelector('i').className = STATE.ttsEnabled ? 'fa-solid fa-volume-high text-lg' : 'fa-solid fa-volume-xmark text-lg opacity-60';
-        }
-
-        function toggleTTS() {
-            STATE.ttsEnabled = !STATE.ttsEnabled;
-            localStorage.setItem('TTS_ENABLED', STATE.ttsEnabled);
-            initTTSButton();
-            if (!STATE.ttsEnabled && 'speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
-        }
-
-        function speakText(text) {
-            if (!STATE.ttsEnabled || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
-            
-            // Limpa formatação Markdown do texto para a voz falar limpo
-            const cleanText = text.replace(/[*_#`]/g, '');
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = 'pt-BR';
-            utterance.rate = 1.0;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // RECONHECIMENTO DE VOZ (STT)
-        function toggleSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert('Seu navegador não suporta reconhecimento de voz.');
-                return;
-            }
-
-            if (STATE.isRecording) return;
-
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
-            recognition.onstart = () => {
-                STATE.isRecording = true;
-                btnMic.classList.add('recording-pulse');
-            };
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                userInput.value = transcript;
-                handleUserMessage(transcript);
-            };
-
-            recognition.onerror = () => {
-                stopMicUI();
-            };
-
-            recognition.onend = () => {
-                stopMicUI();
-            };
-
-            recognition.start();
-        }
-
-        function stopMicUI() {
-            STATE.isRecording = false;
-            btnMic.classList.remove('recording-pulse');
-        }
-
-        // CONFIGURAÇÕES
-        function openSettings() {
-            apiKeyInput.value = STATE.apiKey;
-            settingsModal.classList.remove('hidden');
-        }
-
-        function closeSettings() {
-            settingsModal.classList.add('hidden');
-        }
-
-        function saveApiKey() {
-            const key = apiKeyInput.value.trim();
-            if (!key) {
-                alert('Por favor, digite uma chave de API válida.');
-                return;
-            }
-            STATE.apiKey = key;
-            localStorage.setItem('GEMINI_API_KEY', key);
-            closeSettings();
-            appendBotMessage('Chave de API salva com sucesso! Como posso te ajudar hoje na roça?');
-        }
-
-        function clearHistory() {
-            if (confirm('Deseja limpar toda a conversa?')) {
-                STATE.history = [];
-                chatContainer.innerHTML = '';
-                appendBotMessage('Conversa limpada! Pode perguntar novamente.');
-            }
-        }
-
-        // ENVIO DE MENSAGENS E INTEGRAÇÃO GEMINI
-        async function handleUserMessage(message) {
-            if (!message) return;
-            if (!STATE.apiKey) {
-                alert('Por favor, configure sua Chave de API do Gemini nas configurações antes de enviar.');
-                openSettings();
-                return;
-            }
-
-            appendUserMessage(message);
-            userInput.va
+ function addMessage(text, who='bot') {
+   const wrap = document.createElement('div');
+   wrap.className = who === 'user'
+    ? 'ml-auto max-w-[90%] rounded-2xl rounded-br-sm bg-green-800 p-3 text-white shadow-sm'
+    : 'mr-auto max-w-[95%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-green-100 bg-white p-4 text-sm leading-relaxed shadow-sm';
+   wrap.textContent = text;
+   messages.appendChild(wrap);
+   wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+   if (who === 'bot' && voiceEnabled && 'speechSynthesis' in window) {
+     window.speechSynthesis.cancel();
+     const utter = new SpeechSynthesisUtterance(text);
+     utter.lang = 'pt-BR';
+     window.speechSynthesis.speak(utter);
+   }
+ }
+ function basicReply(q) {
+   const s = q.toLowerCase();
+   if (s.includes('milho')) return 'Para planejar o plantio de milho, considere a época recomendada para sua região, análise do solo, sementes adequadas e previsão de chuva. A quantidade de adubo depende da análise do solo; procure a assistência técnica local antes de definir doses.';
+   if (s.includes('irrig')) return 'A necessidade de irrigação depende da cultura, do tipo de solo, do clima e da fase da planta. Verifique a umidade do solo antes de irrigar e evite encharcamento. Se me disser a cultura e sua região, posso orientar melhor.';
+   if (s.includes('praga') || s.includes('inset')) return 'Para lidar com pragas, primeiro identifique corretamente o inseto e observe o nível de dano. Priorize monitoramento e manejo integrado. Não aplique defensivos sem identificação e orientação técnica.';
+   if (s.includes('gado') || s.includes('animal') || s.includes('galinha')) return 'Os cuidados básicos incluem água limpa, alimentação adequada, abrigo, higiene e observação diária. Se um animal estiver doente, isolá-lo com segurança e procurar um veterinário é o mais indicado.';
+   return 'Oi, parceiro! Posso ajudar com plantio, solo, irrigação, pragas e criação. Para respostas personalizadas com inteligência artificial, abra a engrenagem e configure sua chave Gemini. Também pode me dizer qual cultura, animal ou problema da fazenda você quer resolver.';
+ }
+ async function askGemini(q) {
+   if (!apiKey) return basicReply(q);
+   const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(apiKey), {
+     method:'POST', headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({contents:[{parts:[{text:'Você é Parceiro da Fazenda, um assistente rural brasileiro. Responda em português brasileiro, de forma simples, segura e prática. Não invente previsão do tempo atual nem recomende doses de defensivos sem contexto. Pergunta do usuário: '+q}]}]})
+   });
+   const data = await response.json();
+   if (!response.ok) throw new Error(data?.error?.message || 'A API não aceitou a chave. Confira a chave e tente novamente.');
+   return data?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('\n').trim() || 'Não consegui gerar uma resposta agora. Tente novamente.';
+ }
+ async function send(q) {
+   q = (q || '').trim();
+   if (!q || busy) return;
+   addMessage(q,'user'); input.value=''; busy=true; $('sendButton').disabled=true;
+   const wait = document.createElement('div'); wait.className='mr-auto rounded-xl bg-white p-3 text-sm text-slate-500'; wait.textContent='Pensando na sua pergunta…'; messages.appendChild(wait);
+   try { const answer = await askGemini(q); wait.remove(); addMessage(answer); }
+   catch(err) { wait.remove(); addMessage('Não consegui acessar a Gemini: '+err.message+' Se você ainda não configurou uma chave, toque na engrenagem.'); }
+   finally { busy=false; $('sendButton').disabled=false; }
+ }
+ form.addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+ document.querySelectorAll('.topic').forEach(b => b.addEventListener('click', () => send(b.dataset.question)));
+ $('settingsButton').addEventListener('click', () => { $('apiKey').value=apiKey; modal.classList.remove('hidden'); modal.classList.add('flex'); });
+ $('closeSettings').addEventListener('click', () => { modal.classList.add('hidden'); modal.classList.remove('flex'); });
+ modal.addEventListener('click', e => { if(e.target===modal){modal.classList.add('hidden');modal.classList.remove('flex');} });
+ $('saveKey').addEventListener('click', () => { const key=$('apiKey').value.trim(); if(!key){alert('Cole uma chave primeiro ou use o botão Apagar.');return;} apiKey=key; localStorage.setItem('PARCEIRO_GEMINI_KEY',apiKey); modal.classList.add('hidden');modal.classList.remove('flex'); addMessage('Chave salva neste navegador. Pode mandar sua pergunta!'); });
+ $('removeKey').addEventListener('click', () => { apiKey=''; localStorage.removeItem('PARCEIRO_GEMINI_KEY'); $('apiKey').value=''; alert('Chave apagada deste navegador.'); });
+ $('voiceToggle').addEventListener('click', () => { voiceEnabled=!voiceEnabled; localStorage.setItem('PARCEIRO_VOICE',voiceEnabled); $('voiceToggle').innerHTML=voiceEnabled?'<i class="fa-solid fa-volume-high"></i>':'<i class="fa-solid fa-volume-xmark"></i>'; if(!voiceEnabled && 'speechSynthesis' in window) speechSynthesis.cancel(); });
+ $('themeToggle').addEventListener('click', () => { dark=!dark; document.body.classList.toggle('bg-zinc-950',dark);document.body.classList.toggle('text-white',dark);document.body.classList.toggle('bg-amber-50',!dark); document.querySelectorAll('#messages > div, .topic, #chatForm').forEach(el=>{el.classList.toggle('bg-zinc-900',dark);el.classList.toggle('text-white',dark);el.classList.toggle('bg-white',!dark);}); $('themeToggle').innerHTML=dark?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>'; });
+ $('micButton').addEventListener('click', () => {
+   const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+   if(!SpeechRecognition){alert('O reconhecimento de voz não é compatível com este navegador. Use o microfone do teclado ou escreva a pergunta.');return;}
+   if(recognition){try{recognition.stop();}catch(e){}}
+   recognition=new SpeechRecognition(); recognition.lang='pt-BR'; recognition.continuous=false; recognition.interimResults=false;
+   recognition.onstart=()=> $('micButton').classList.add('recording');
+   recognition.onresult=e=>{input.value=e.results[0][0].transcript; send(input.value);};
+   recognition.onerror=()=>alert('Não consegui ouvir. Confira a permissão do microfone e tente novamente.');
+   recognition.onend=()=> $('micButton').classList.remove('recording');
+   try{recognition.start();}catch(e){alert('Não foi possível iniciar o microfone. Tente novamente.');}
+ });
+ if(!apiKey){ setTimeout(()=>{ addMessage('Dica: os botões já funcionam. Sem chave Gemini, posso responder perguntas básicas sobre plantio, irrigação, pragas e animais. Para conversar com a IA, toque na engrenagem e configure sua chave.'); },350); }
+})();
+</script>
+</body>
+</html>
