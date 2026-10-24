@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
 <head>
     <meta charset="UTF-8">
@@ -36,13 +35,13 @@
                         earth: {
                             50: '#fbf8f5',
                             100: '#f5efe8',
-                            200: '#e9dcce',
+                            200: '#e9dccc',
                             300: '#d9c2aa',
                             400: '#c5a383',
-                            500: '#b48a66',
+                            500: '#b88a66',
                             600: '#a37554',
                             700: '#885e44',
-                            800: '#6f4e3b',
+                            800: '#6f4c3b',
                             900: '#5c4132',
                         }
                     },
@@ -54,14 +53,13 @@
             }
         }
     </script>
-
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
-
+        
         /* Pulse animation for microphone */
         @keyframes micPulse {
             0% {
@@ -78,277 +76,348 @@
             }
         }
 
-        .mic-active {
+        .recording-pulse {
             animation: micPulse 1.5s infinite;
             background-color: #dc2626 !important;
-            color: white !important;
         }
 
-        /* Wave indicator for TTS */
-        @keyframes speakingWave {
-            0%, 100% { height: 6px; }
-            50% { height: 18px; }
-        }
-
-        .wave-bar {
-            display: inline-block;
-            width: 3px;
-            background-color: #4c9246;
-            border-radius: 3px;
-            animation: speakingWave 1s ease-in-out infinite;
-        }
-        .wave-bar:nth-child(2) { animation-delay: 0.2s; }
-        .wave-bar:nth-child(3) { animation-delay: 0.4s; }
-
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.03);
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(76, 146, 70, 0.3);
-            border-radius: 4px;
+            background: #cbd5e1;
+            border-radius: 9999px;
         }
-
-        .app-height {
-            height: 100vh;
-            height: 100dvh;
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
         }
     </style>
 </head>
-<body class="bg-earth-100 dark:bg-stone-900 text-stone-800 dark:text-stone-100 antialiased selection:bg-farm-200">
+<body class="bg-amber-50/40 dark:bg-zinc-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col antialiased selection:bg-farm-500 selection:text-white transition-colors duration-200">
 
-    <!-- Application Shell -->
-    <div class="app-height flex flex-col max-w-md mx-auto bg-earth-50 dark:bg-stone-800 shadow-2xl overflow-hidden relative border-x border-earth-200/50 dark:border-stone-700">
-
-        <!-- Top Header -->
-        <header class="bg-gradient-to-r from-farm-800 to-farm-700 text-white px-4 py-3 shadow-md flex items-center justify-between z-10">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-full bg-farm-100/20 border border-farm-300/40 flex items-center justify-center text-amber-300 shadow-inner">
+    <!-- HEADER -->
+    <header class="sticky top-0 z-30 bg-farm-800 text-white shadow-md border-b border-farm-900">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-farm-600 flex items-center justify-center text-amber-300 shadow-inner">
                     <i class="fa-solid fa-wheat-awn text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-display font-bold text-lg leading-tight tracking-wide text-amber-100 flex items-center gap-1.5">
+                    <h1 class="font-display font-bold text-lg leading-tight tracking-wide flex items-center gap-2">
                         Parceiro da Fazenda
                     </h1>
-                    <p class="text-xs text-farm-200/90 font-medium flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Assistente de Voz do Campo
+                    <p class="text-xs text-farm-200 font-medium flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                        Assistente de Voz do Campo
                     </p>
                 </div>
             </div>
 
-            <!-- Header Actions -->
-            <div class="flex items-center space-x-1">
-                <button id="toggleTtsBtn" title="Ativar/Desativar Voz" class="p-2 rounded-full hover:bg-white/10 text-amber-100 transition duration-200 focus:outline-none" onclick="app.toggleTts()">
-                    <i id="ttsIcon" class="fa-solid fa-volume-high text-base"></i>
+            <!-- CONTROLES SUPERIORES -->
+            <div class="flex items-center gap-1 sm:gap-2">
+                <button id="btnTTS" title="Ativar/Desativar Voz" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
+                    <i class="fa-solid fa-volume-high text-lg"></i>
                 </button>
-                <button title="Alternar Modo Escuro" class="p-2 rounded-full hover:bg-white/10 text-amber-100 transition duration-200 focus:outline-none" onclick="app.toggleDarkMode()">
-                    <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
+                <button id="btnTheme" title="Alternar Tema" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
+                    <i class="fa-solid fa-moon text-lg"></i>
                 </button>
-                <button title="Limpar Conversa" class="p-2 rounded-full hover:bg-white/10 text-amber-100 transition duration-200 focus:outline-none" onclick="app.clearChat()">
-                    <i class="fa-solid fa-rotate-right text-base"></i>
+                <button id="btnClearHistory" title="Limpar Conversa" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
+                    <i class="fa-solid fa-rotate-right text-lg"></i>
                 </button>
-                <button title="Configurações e PWA" class="p-2 rounded-full hover:bg-white/10 text-amber-100 transition duration-200 focus:outline-none" onclick="app.openSettings()">
-                    <i class="fa-solid fa-sliders text-base"></i>
+                <button id="btnSettings" title="Configurações da API" class="p-2.5 rounded-full hover:bg-farm-700/80 text-farm-100 transition-colors">
+                    <i class="fa-solid fa-sliders text-lg"></i>
                 </button>
             </div>
-        </header>
-
-        <!-- Active TTS Indicator -->
-        <div id="ttsIndicator" class="hidden bg-farm-100 dark:bg-farm-900/60 border-b border-farm-200 dark:border-farm-800 px-4 py-1.5 flex items-center justify-between text-xs text-farm-900 dark:text-farm-200 font-medium">
-            <div class="flex items-center space-x-2">
-                <div class="flex items-end space-x-0.5 h-4">
-                    <span class="wave-bar"></span>
-                    <span class="wave-bar"></span>
-                    <span class="wave-bar"></span>
-                </div>
-                <span>O Parceiro da Fazenda está falando...</span>
-            </div>
-            <button onclick="app.stopTts()" class="text-farm-900 dark:text-farm-100 font-bold hover:underline text-xl leading-none">&times;</button>
         </div>
+    </header>
 
-        <!-- Main Chat & Dashboard View -->
-        <main id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4 bg-[radial-gradient(#e9dcce_1px,transparent_1px)] dark:bg-[radial-gradient(#332a24_1px,transparent_1px)] [background-size:16px_16px]">
-            
-            <!-- Welcome Banner -->
-            <div class="flex items-start space-x-2 text-stone-800 dark:text-stone-100">
-                <div class="w-8 h-8 rounded-full bg-farm-700 text-amber-300 flex items-center justify-center flex-shrink-0 shadow">
-                    <i class="fa-solid fa-tractor text-xs"></i>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col justify-between gap-4">
+        
+        <!-- MENSAGENS -->
+        <div id="chatContainer" class="flex-1 overflow-y-auto space-y-4 pr-1 min-h-[50vh] max-h-[calc(100vh-220px)]">
+            <!-- Boas-vindas -->
+            <div class="flex items-start gap-3 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-emerald-900/10 dark:border-zinc-800">
+                <div class="w-9 h-9 rounded-full bg-farm-700 text-amber-300 flex items-center justify-center shrink-0 font-bold">
+                    <i class="fa-solid fa-tractor text-sm"></i>
                 </div>
-                <div class="bg-white dark:bg-stone-700 rounded-2xl rounded-tl-none p-3.5 shadow-sm border border-earth-200/80 dark:border-stone-600 max-w-[85%] text-sm leading-relaxed">
-                    <p class="font-bold text-farm-800 dark:text-farm-300 mb-1 flex items-center gap-1">
-                        <span>Ôpa, meu amigo! Seja bem-vindo!</span> 🌾
-                    </p>
-                    <p class="mb-2">Sou o <strong>Parceiro da Fazenda</strong>. Estou aqui pra te ajudar na lida diária da roça: plantio, criação, irrigação, clima e adubação.</p>
-                    <p class="text-xs text-stone-500 dark:text-stone-300 italic border-t border-stone-100 dark:border-stone-600 pt-1.5 mt-2">
+                <div class="space-y-2 text-sm leading-relaxed">
+                    <p class="font-semibold text-farm-900 dark:text-farm-300">Ôpa, meu amigo! Seja bem-vindo! 🌾</p>
+                    <p>Sou o <strong>Parceiro da Fazenda</strong>. Estou aqui pra te ajudar na lida diária da roça: plantio, criação, irrigação, clima e adubação.</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 italic bg-amber-50 dark:bg-zinc-800/60 p-2 rounded-lg border border-amber-200/50 dark:border-zinc-700">
                         💡 Toque nos cards abaixo ou aperte o microfone verde pra conversar por voz!
                     </p>
                 </div>
             </div>
-
-            <!-- Quick Knowledge Cards Dashboard -->
-            <div id="quickCardsSection" class="pt-2">
-                <p class="text-xs font-semibold text-earth-800 dark:text-stone-300 mb-2 px-1 flex items-center justify-between">
-                    <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-compass text-amber-500"></i> Cards Rápidos do Campo
-                    </span>
-                    <span class="text-[10px] text-stone-400">Toque para perguntar</span>
-                </p>
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="app.openKnowledgeCard('plantio')" class="bg-white dark:bg-stone-700 p-3 rounded-xl border border-earth-200 dark:border-stone-600 shadow-sm text-left hover:border-farm-400 transition flex items-center gap-2.5 active:scale-95">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm flex-shrink-0">🌱</div>
-                        <div>
-                            <div class="font-bold text-xs text-stone-800 dark:text-stone-100">Plantio & Solo</div>
-                            <div class="text-[10px] text-stone-500 dark:text-stone-400">Milho, café, feijão</div>
-                        </div>
-                    </button>
-
-                    <button onclick="app.openKnowledgeCard('irrigacao')" class="bg-white dark:bg-stone-700 p-3 rounded-xl border border-earth-200 dark:border-stone-600 shadow-sm text-left hover:border-farm-400 transition flex items-center gap-2.5 active:scale-95">
-                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm flex-shrink-0">💧</div>
-                        <div>
-                            <div class="font-bold text-xs text-stone-800 dark:text-stone-100">Irrigação</div>
-                            <div class="text-[10px] text-stone-500 dark:text-stone-400">Gotejamento & água</div>
-                        </div>
-                    </button>
-
-                    <button onclick="app.openKnowledgeCard('pragas')" class="bg-white dark:bg-stone-700 p-3 rounded-xl border border-earth-200 dark:border-stone-600 shadow-sm text-left hover:border-farm-400 transition flex items-center gap-2.5 active:scale-95">
-                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm flex-shrink-0">🐛</div>
-                        <div>
-                            <div class="font-bold text-xs text-stone-800 dark:text-stone-100">Pragas & Insetos</div>
-                            <div class="text-[10px] text-stone-500 dark:text-stone-400">Repelentes naturais</div>
-                        </div>
-                    </button>
-
-                    <button onclick="app.openKnowledgeCard('animais')" class="bg-white dark:bg-stone-700 p-3 rounded-xl border border-earth-200 dark:border-stone-600 shadow-sm text-left hover:border-farm-400 transition flex items-center gap-2.5 active:scale-95">
-                        <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm flex-shrink-0">🐔</div>
-                        <div>
-                            <div class="font-bold text-xs text-stone-800 dark:text-stone-100">Criação & Animais</div>
-                            <div class="text-[10px] text-stone-500 dark:text-stone-400">Galinhas, gado e suínos</div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dynamic Messages List -->
-            <div id="messagesList" class="space-y-4"></div>
-
-        </main>
-
-        <!-- Bottom Input & Controls -->
-        <footer class="bg-white dark:bg-stone-900 border-t border-earth-200 dark:border-stone-700 p-3 shadow-lg z-10">
-            <div id="listeningFeedback" class="hidden mb-2 px-3 py-1 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-800 rounded-lg text-xs text-red-600 dark:text-red-300 flex items-center justify-between">
-                <span class="flex items-center gap-1.5 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
-                    Escutando sua voz em português...
-                </span>
-                <span id="sttTranscriptPreview" class="italic text-stone-500 dark:text-stone-400 truncate max-w-[150px]"></span>
-            </div>
-
-            <form id="chatForm" onsubmit="app.handleFormSubmit(event)" class="flex items-center space-x-2">
-                <div class="relative flex-1">
-                    <input 
-                        type="text" 
-                        id="userInput" 
-                        placeholder="Pergunte algo sobre a roça..." 
-                        class="w-full bg-earth-50 dark:bg-stone-800 border border-earth-300 dark:border-stone-600 text-stone-800 dark:text-stone-100 rounded-full py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-farm-500 transition"
-                        autocomplete="off"
-                    />
-                    <button 
-                        type="submit" 
-                        class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-farm-600 hover:bg-farm-700 text-white flex items-center justify-center transition active:scale-90"
-                        title="Enviar mensagem"
-                    >
-                        <i class="fa-solid fa-paper-plane text-xs"></i>
-                    </button>
-                </div>
-
-                <button 
-                    type="button" 
-                    id="micBtn" 
-                    onclick="app.toggleVoiceRecognition()" 
-                    class="w-12 h-12 rounded-full bg-farm-600 hover:bg-farm-700 text-white flex items-center justify-center text-lg shadow-md transition-all active:scale-95 focus:outline-none flex-shrink-0"
-                    title="Falar por voz"
-                >
-                    <i class="fa-solid fa-microphone"></i>
-                </button>
-            </form>
-        </footer>
-
-        <!-- Settings & Gemini API Modal -->
-        <div id="settingsModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-100 rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto border border-earth-200 dark:border-stone-700">
-                <div class="flex items-center justify-between border-b pb-3 border-stone-200 dark:border-stone-700">
-                    <h3 class="font-bold text-lg text-farm-900 dark:text-farm-300 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-farm-600"></i> Configurações & PWA
-                    </h3>
-                    <button onclick="app.closeSettings()" class="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 text-xl font-bold p-1">&times;</button>
-                </div>
-
-                <!-- Gemini API Key -->
-                <div class="space-y-2 bg-earth-50 dark:bg-stone-700/50 p-3.5 rounded-xl border border-earth-200 dark:border-stone-600">
-                    <label class="block text-xs font-bold text-earth-900 dark:text-earth-200 uppercase tracking-wider">
-                        Chave de API Gemini (Opcional)
-                    </label>
-                    <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
-                        Conecte sua chave do Google Gemini para respostas avançadas em tempo real diretamente da nuvem.
-                    </p>
-                    <input 
-                        type="password" 
-                        id="geminiApiKey" 
-                        placeholder="Cole sua chave AIzaSy..." 
-                        class="w-full bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 rounded-lg p-2 text-xs focus:ring-2 focus:ring-farm-500 focus:outline-none"
-                    />
-                    <button onclick="app.saveApiKey()" class="w-full bg-farm-600 hover:bg-farm-700 text-white font-medium text-xs py-2 rounded-lg transition">
-                        Salvar Chave
-                    </button>
-                </div>
-
-                <!-- Android PWA Guide -->
-                <div class="space-y-2 bg-amber-50/80 dark:bg-amber-950/30 p-3.5 rounded-xl border border-amber-200 dark:border-amber-800 text-stone-800 dark:text-stone-200">
-                    <h4 class="font-bold text-xs text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
-                        <i class="fa-brands fa-android text-emerald-600 text-sm"></i> Instalar no Android (Modo App)
-                    </h4>
-                    <ol class="text-xs space-y-1.5 list-decimal list-inside text-stone-700 dark:text-stone-300">
-                        <li>Abra este site no <strong>Google Chrome</strong> do seu celular.</li>
-                        <li>Toque no menu de <strong>três pontinhos (⋮)</strong> no canto superior.</li>
-                        <li>Selecione <strong>"Adicionar à tela inicial"</strong> ou <strong>"Instalar aplicativo"</strong>.</li>
-                        <li>Abra direto da tela inicial como um app nativo!</li>
-                    </ol>
-                </div>
-
-                <div class="pt-2">
-                    <button onclick="app.closeSettings()" class="w-full bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-800 dark:text-stone-100 font-bold text-sm py-2.5 rounded-xl transition">
-                        Fechar
-                    </button>
-                </div>
-            </div>
         </div>
 
+        <!-- CARDS DE ATALHO RÁPIDO -->
+        <div id="quickCards" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-1.5 group-hover:bg-farm-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Plantio & Solo</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Milho, café, feijão</div>
+            </button>
+            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-1.5 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-droplet"></i>
+                </div>
+                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Irrigação</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Gotejamento & água</div>
+            </button>
+            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-1.5 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-bug"></i>
+                </div>
+                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Pragas & Insetos</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Repelentes naturais</div>
+            </button>
+            <button class="quick-card bg-white dark:bg-zinc-900 p-3 rounded-xl border border-slate-200 dark:border-zinc-800 hover:border-farm-500 text-left transition-all shadow-sm group">
+                <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center mb-1.5 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-cow"></i>
+                </div>
+                <div class="font-semibold text-xs text-slate-800 dark:text-slate-200">Criação & Animais</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400">Galinhas, gado e suínos</div>
+            </button>
+        </div>
+
+        <!-- ÁREA DE ENTRADA -->
+        <div class="sticky bottom-3 pt-2">
+            <form id="chatForm" class="flex items-center gap-2 bg-white dark:bg-zinc-900 p-2 rounded-full shadow-lg border border-slate-200 dark:border-zinc-800">
+                <input type="text" id="userInput" placeholder="Pergunte algo sobre a roça..." class="flex-1 bg-transparent px-4 py-2 text-sm focus:outline-none text-slate-800 dark:text-slate-100 placeholder:text-slate-400">
+                <button type="submit" id="btnSend" title="Enviar Mensagem" class="w-10 h-10 rounded-full bg-farm-700 hover:bg-farm-800 text-white flex items-center justify-center shrink-0 transition-all active:scale-95">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+                <button type="button" id="btnMic" title="Conversar por Voz" class="w-12 h-12 rounded-full bg-farm-600 hover:bg-farm-700 text-white flex items-center justify-center shrink-0 transition-all shadow-md active:scale-95">
+                    <i class="fa-solid fa-microphone text-lg"></i>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-zinc-800 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-3">
+                <h3 class="font-display font-bold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-farm-600"></i>
+                    Configurar Chave da API
+                </h3>
+                <button id="btnCloseSettings" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Para conversar com o Parceiro da Fazenda, informe sua Chave de API do Google Gemini.
+                </p>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Chave API Gemini:</label>
+                    <input type="password" id="apiKeyInput" placeholder="Cole sua chave AIzaSy... aqui" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-farm-500">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button id="btnSaveKey" class="w-full py-2.5 bg-farm-700 hover:bg-farm-800 text-white font-semibold rounded-xl text-sm transition-colors shadow-md">
+                    Salvar Chave
+                </button>
+            </div>
+        </div>
     </div>
 
+    <!-- JAVASCRIPT DO APLICATIVO -->
     <script>
-        class ParceiroDaFazendaApp {
-            constructor() {
-                this.messagesList = document.getElementById('messagesList');
-                this.userInput = document.getElementById('userInput');
-                this.chatContainer = document.getElementById('chatContainer');
-                this.micBtn = document.getElementById('micBtn');
-                this.listeningFeedback = document.getElementById('listeningFeedback');
-                this.sttTranscriptPreview = document.getElementById('sttTranscriptPreview');
-                this.ttsIndicator = document.getElementById('ttsIndicator');
-                this.toggleTtsBtn = document.getElementById('toggleTtsBtn');
-                this.ttsIcon = document.getElementById('ttsIcon');
-                this.themeIcon = document.getElementById('themeIcon');
-                this.settingsModal = document.getElementById('settingsModal');
-                this.geminiApiKeyInput = document.getElementById('geminiApiKey');
+        // ESTADO DA APLICAÇÃO
+        const STATE = {
+            apiKey: localStorage.getItem('GEMINI_API_KEY') || '',
+            ttsEnabled: localStorage.getItem('TTS_ENABLED') !== 'false',
+            darkMode: localStorage.getItem('DARK_MODE') === 'true',
+            history: [],
+            isRecording: false
+        };
 
-                this.ttsEnabled = true;
-                this.isListening = false;
-                this.recognition = null;
-                this.synth = window.speechSynthesis;
-                this.ptVoice = null;
-                this.geminiApiKey = localStorage.getItem('parceiro_fazenda_gemini_key') || '';
-                this.isDarkMode = localStorage.ge
+        // ELEMENTOS DO DOM
+        const $ = (id) => document.getElementById(id);
+        const chatContainer = $('chatContainer');
+        const chatForm = $('chatForm');
+        const userInput = $('userInput');
+        const btnMic = $('btnMic');
+        const btnTTS = $('btnTTS');
+        const btnTheme = $('btnTheme');
+        const btnClearHistory = $('btnClearHistory');
+        const btnSettings = $('btnSettings');
+        const settingsModal = $('settingsModal');
+        const btnCloseSettings = $('btnCloseSettings');
+        const apiKeyInput = $('apiKeyInput');
+        const btnSaveKey = $('btnSaveKey');
+
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initTTSButton();
+            setupEventListeners();
+            
+            // Se não houver chave salva, abre as configurações automaticamente após 1 segundo
+            if (!STATE.apiKey) {
+                setTimeout(() => openSettings(), 800);
+            }
+        });
+
+        // EVENT LISTENERS
+        function setupEventListeners() {
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                handleUserMessage(userInput.value.trim());
+            });
+
+            btnSettings.addEventListener('click', openSettings);
+            btnCloseSettings.addEventListener('click', closeSettings);
+            btnSaveKey.addEventListener('click', saveApiKey);
+            
+            btnTheme.addEventListener('click', toggleTheme);
+            btnTTS.addEventListener('click', toggleTTS);
+            btnClearHistory.addEventListener('click', clearHistory);
+
+            // Atalhos rápidos
+            document.querySelectorAll('.quick-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const title = card.querySelector('.font-semibold').textContent;
+                    handleUserMessage(`Quero dicas e orientações sobre: ${title}`);
+                });
+            });
+
+            // Microfone (Voz)
+            btnMic.addEventListener('click', toggleSpeechRecognition);
+        }
+
+        // TEMA ESCURO / CLARO
+        function initTheme() {
+            if (STATE.darkMode) {
+                document.documentElement.classList.add('dark');
+                btnTheme.querySelector('i').className = 'fa-solid fa-sun text-lg';
+            }
+        }
+
+        function toggleTheme() {
+            STATE.darkMode = !STATE.darkMode;
+            localStorage.setItem('DARK_MODE', STATE.darkMode);
+            document.documentElement.classList.toggle('dark');
+            btnTheme.querySelector('i').className = STATE.darkMode ? 'fa-solid fa-sun text-lg' : 'fa-solid fa-moon text-lg';
+        }
+
+        // VOZ (TTS)
+        function initTTSButton() {
+            btnTTS.querySelector('i').className = STATE.ttsEnabled ? 'fa-solid fa-volume-high text-lg' : 'fa-solid fa-volume-xmark text-lg opacity-60';
+        }
+
+        function toggleTTS() {
+            STATE.ttsEnabled = !STATE.ttsEnabled;
+            localStorage.setItem('TTS_ENABLED', STATE.ttsEnabled);
+            initTTSButton();
+            if (!STATE.ttsEnabled && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function speakText(text) {
+            if (!STATE.ttsEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            
+            // Limpa formatação Markdown do texto para a voz falar limpo
+            const cleanText = text.replace(/[*_#`]/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // RECONHECIMENTO DE VOZ (STT)
+        function toggleSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Seu navegador não suporta reconhecimento de voz.');
+                return;
+            }
+
+            if (STATE.isRecording) return;
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                STATE.isRecording = true;
+                btnMic.classList.add('recording-pulse');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                handleUserMessage(transcript);
+            };
+
+            recognition.onerror = () => {
+                stopMicUI();
+            };
+
+            recognition.onend = () => {
+                stopMicUI();
+            };
+
+            recognition.start();
+        }
+
+        function stopMicUI() {
+            STATE.isRecording = false;
+            btnMic.classList.remove('recording-pulse');
+        }
+
+        // CONFIGURAÇÕES
+        function openSettings() {
+            apiKeyInput.value = STATE.apiKey;
+            settingsModal.classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            settingsModal.classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                alert('Por favor, digite uma chave de API válida.');
+                return;
+            }
+            STATE.apiKey = key;
+            localStorage.setItem('GEMINI_API_KEY', key);
+            closeSettings();
+            appendBotMessage('Chave de API salva com sucesso! Como posso te ajudar hoje na roça?');
+        }
+
+        function clearHistory() {
+            if (confirm('Deseja limpar toda a conversa?')) {
+                STATE.history = [];
+                chatContainer.innerHTML = '';
+                appendBotMessage('Conversa limpada! Pode perguntar novamente.');
+            }
+        }
+
+        // ENVIO DE MENSAGENS E INTEGRAÇÃO GEMINI
+        async function handleUserMessage(message) {
+            if (!message) return;
+            if (!STATE.apiKey) {
+                alert('Por favor, configure sua Chave de API do Gemini nas configurações antes de enviar.');
+                openSettings();
+                return;
+            }
+
+            appendUserMessage(message);
+            userInput.va
